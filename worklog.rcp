@@ -1,0 +1,120 @@
+#include "resources.h"
+
+APPLICATIONICONNAME 1000 "WorkLog"
+VERSION 1 "1.0"
+ICONFAMILY "icon_large.bmp" "" "" "" TRANSPARENT 255 0 255
+SMALLICONFAMILY "icon_small.bmp" "" "" "" TRANSPARENT 255 0 255
+
+/* ---------------------------------------------------------------- Day */
+FORM ID DayForm AT (0 0 160 160)
+NOFRAME
+MENUID DayMenuBar
+BEGIN
+  TITLE "Day"
+  REPEATBUTTON "\002" ID DayPrev AT (88 1 10 12) NOFRAME FONT 4
+  BUTTON "Mo 00.00." ID DayDate AT (98 1 50 12) NOFRAME FONT 1
+  REPEATBUTTON "\003" ID DayNext AT (148 1 10 12) NOFRAME FONT 4
+
+  LABEL "Begin" ID DayBeginLabel AT (1 18) FONT 1
+  SELECTORTRIGGER "00:00" ID DayBegin AT (31 18 AUTO AUTO)
+  LABEL "End" ID DayEndLabel AT (84 18) FONT 1
+  SELECTORTRIGGER "00:00" ID DayEnd AT (106 18 AUTO AUTO)
+
+  GADGET ID DayMeetings AT (0 33 74 110)
+  SCROLLBAR ID DayMeetingsBar AT (75 33 7 110) VALUE 0 MIN 0 MAX 0 PAGESIZE 9
+  GADGET ID DayTodos AT (85 33 67 110)
+  SCROLLBAR ID DayTodosBar AT (153 33 7 110) VALUE 0 MIN 0 MAX 0 PAGESIZE 9
+
+  BUTTON "Meeting" ID DayNewMeeting AT (1 147 40 12)
+  BUTTON "To Do" ID DayNewTodo AT (125 147 34 12)
+  BUTTON "Month" ID DayMonth AT (60 147 40 12)
+END
+
+MENU ID DayMenuBar
+BEGIN
+  PULLDOWN "Options"
+  BEGIN
+    MENUITEM "Begin Now" ID DayMenuBeginNow "B"
+    MENUITEM "End Now" ID DayMenuEndNow "E"
+    MENUITEM "Clear Times" ID DayMenuClearTimes
+    MENUITEM SEPARATOR
+    MENUITEM "Month View" ID DayMenuMonth "M"
+    MENUITEM "About WorkLog" ID DayMenuAbout
+  END
+END
+
+/* -------------------------------------------------------------- Month */
+FORM ID MonthForm AT (0 0 160 160)
+NOFRAME
+MENUID MonthMenuBar
+BEGIN
+  TITLE "Month"
+  REPEATBUTTON "\002" ID MonthPrev AT (88 1 10 12) NOFRAME FONT 4
+  BUTTON "Sep 2026" ID MonthLabel AT (98 1 50 12) NOFRAME FONT 1
+  REPEATBUTTON "\003" ID MonthNext AT (148 1 10 12) NOFRAME FONT 4
+
+  GADGET ID MonthList AT (0 17 152 121)
+  SCROLLBAR ID MonthListBar AT (153 17 7 121) VALUE 0 MIN 0 MAX 0 PAGESIZE 10
+
+  BUTTON "Today" ID MonthToday AT (1 147 36 12)
+  BUTTON "Day" ID MonthDay AT (65 147 30 12)
+END
+
+MENU ID MonthMenuBar
+BEGIN
+  PULLDOWN "Options"
+  BEGIN
+    MENUITEM "Go to Today" ID MonthMenuToday "T"
+    MENUITEM "About WorkLog" ID MonthMenuAbout
+  END
+END
+
+/* ------------------------------------------------------- Edit (modal) */
+FORM ID EditForm AT (2 54 156 104)
+MODAL
+SAVEBEHIND
+DEFAULTBTNID EditCancel
+BEGIN
+  TITLE "Meeting"
+  LABEL "Time:" ID EditTimeLabel AT (6 16) FONT 1
+  SELECTORTRIGGER "00:00" ID EditTime AT (36 16 AUTO AUTO)
+  FIELD ID EditField AT (6 30 144 55) UNDERLINED MULTIPLELINES MAXCHARS 255 AUTOSHIFT
+  BUTTON "OK" ID EditOK AT (6 88 30 12)
+  BUTTON "Cancel" ID EditCancel AT (42 88 36 12)
+  BUTTON "Delete" ID EditDelete AT (84 88 36 12)
+  GRAFFITISTATEINDICATOR AT (140 89)
+END
+
+/* ------------------------------------------------------------- Alerts */
+ALERT ID RomIncompatibleAlert
+ERROR
+BEGIN
+  TITLE "System Incompatible"
+  MESSAGE "WorkLog requires Palm OS 3.1 or later."
+  BUTTONS "OK"
+END
+
+ALERT ID DeleteAlert
+CONFIRMATION
+DEFAULTBUTTON 1
+BEGIN
+  TITLE "Delete"
+  MESSAGE "Delete this item?"
+  BUTTONS "Delete" "Cancel"
+END
+
+ALERT ID MemoryAlert
+ERROR
+BEGIN
+  TITLE "Out of Memory"
+  MESSAGE "Not enough memory to save."
+  BUTTONS "OK"
+END
+
+ALERT ID AboutAlert
+INFORMATION
+BEGIN
+  TITLE "About WorkLog"
+  MESSAGE "WorkLog 1.0\n\nMeetings, to-dos and work hours, one day at a time."
+  BUTTONS "OK"
+END

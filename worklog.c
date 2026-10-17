@@ -70,6 +70,8 @@ static const Char *kDow[] = { "Su", "Mo", "Tu", "We", "Th", "Fr", "Sa" };
 static const Char *kMonth[] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun",
                                 "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
 
+static Boolean   showFullDescription = true;
+
 /* ------------------------------------------------------------ helpers */
 
 static void *GetObj(FormType *frm, UInt16 id)
@@ -237,6 +239,8 @@ static void AddLines(Column *c, UInt16 rec, RecHdr *r)
 {
     Char *text = (Char *)(r + 1), *p = text;
     Boolean first = true;
+    UInt8 lines = 0;
+    const UInt8 max_lines = showFullDescription ? 128 : 2;
 
     do {
         UInt16 len = FntWordWrap(p, c->textW);
@@ -247,9 +251,10 @@ static void AddLines(Column *c, UInt16 rec, RecHdr *r)
         c->lines[c->numLines].len = len;
         c->lines[c->numLines].first = first;
         c->numLines++;
+        lines++;
         p += len;
         first = false;
-    } while (*p);
+    } while (*p && lines < max_lines);
 }
 
 static void LoadDay(void)
@@ -357,6 +362,7 @@ static void DrawDay(FormType *frm)
     CtlSetLabel((ControlType *)GetObj(frm, DayBegin), gBeginLabel);
     FormatTime(gEnd, gEndLabel);
     CtlSetLabel((ControlType *)GetObj(frm, DayEnd), gEndLabel);
+    CtlSetValue((ControlType *)GetObj(frm, DayShowFull), showFullDescription);
 
     DrawColumn(frm, &gCols[0]);
     DrawColumn(frm, &gCols[1]);
@@ -451,6 +457,11 @@ static Boolean DayFormHandleEvent(EventType *e)
 
     case ctlSelectEvent:
         switch (e->data.ctlSelect.controlID) {
+        case DayShowFull:
+            showFullDescription = !showFullDescription;
+            LoadDay();
+            DrawDay(frm);
+            return true;
         case DayDate: {
             DateType d = ToDate(gDay);
             Int16 month = d.month, day = d.day, year = d.year + firstYear;
@@ -770,6 +781,7 @@ static Boolean MonthFormHandleEvent(EventType *e)
             ShowMonth(frm, true);
             return true;
         case MonthDay:
+            // showFullDescription = true;
             FrmGotoForm(DayForm);
             return true;
         }
@@ -786,6 +798,7 @@ static Boolean MonthFormHandleEvent(EventType *e)
             UInt16 day = gMonthTop + (e->screenY - r.topLeft.y) / lineH;
             if (day < gMonthDays) {
                 gDay = gMonthFirst + day;
+                // showFullDescription = true;
                 FrmGotoForm(DayForm);
             }
             return true;

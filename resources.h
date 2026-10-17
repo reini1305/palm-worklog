@@ -17,6 +17,7 @@
 #define DayMonth              1012
 #define DayBeginLabel         1013
 #define DayEndLabel           1014
+#define DayShowFull           1015
 
 #define MonthForm             1100
 #define MonthPrev             1101

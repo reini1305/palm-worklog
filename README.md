@@ -11,6 +11,10 @@
 - **Month view**: begin, end and duration per day, with a monthly total.
   Tap a row to open that day.
 
+## LLM Disclaimer
+
+This initial version has been generated using Claude and Opus 5.5 according to a mockup of me. Subsequent tweaks have been done by hand as well as future development as I'm learning Palm OS programming.
+
 ## Build
 
 Toolchain setup (once):

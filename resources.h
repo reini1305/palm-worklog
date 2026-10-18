@@ -40,8 +40,8 @@
 #define DayMenuBar            2000
 #define DayMenuBeginNow       2001
 #define DayMenuEndNow         2002
-#define DayMenuClearTimes     2003
-#define DayMenuMonth          2004
+#define DayMenuNewMeeting     2003
+#define DayMenuNewTodo        2004
 #define DayMenuAbout          2005
 
 #define MonthMenuBar          2100

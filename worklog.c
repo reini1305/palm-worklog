@@ -520,11 +520,21 @@ static Boolean DayFormHandleEvent(EventType *e)
 
     case menuEvent:
         switch (e->data.menu.itemID) {
-        case DayMenuBeginNow:   SetDayTimes(frm, NowMinutes(), gEnd);   break;
-        case DayMenuEndNow:     SetDayTimes(frm, gBegin, NowMinutes()); break;
-        case DayMenuClearTimes: SetDayTimes(frm, kNoTime, kNoTime);       break;
-        case DayMenuMonth:      FrmGotoForm(MonthForm);                 break;
-        case DayMenuAbout:      FrmAlert(AboutAlert);                   break;
+        case DayMenuBeginNow:
+            SetDayTimes(frm, NowMinutes(), gEnd);
+            break;
+        case DayMenuEndNow:
+            SetDayTimes(frm, gBegin, NowMinutes());
+            break;
+        case DayMenuNewMeeting:
+            OpenEditor(-1, kindMeeting);
+            break;
+        case DayMenuNewTodo:
+            OpenEditor(-1, kindTodo);
+            break;
+        case DayMenuAbout:
+            FrmAlert(AboutAlert);
+            break;
         }
         return true;
 

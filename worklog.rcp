@@ -37,9 +37,9 @@ BEGIN
   BEGIN
     MENUITEM "Begin Now" ID DayMenuBeginNow "B"
     MENUITEM "End Now" ID DayMenuEndNow "E"
-    MENUITEM "Clear Times" ID DayMenuClearTimes
+    MENUITEM "New Meeting" ID DayMenuNewMeeting "M"
+    MENUITEM "New Todo" ID DayMenuNewTodo "T"
     MENUITEM SEPARATOR
-    MENUITEM "Month View" ID DayMenuMonth "M"
     MENUITEM "About WorkLog" ID DayMenuAbout
   END
 END

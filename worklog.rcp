@@ -1,7 +1,7 @@
 #include "resources.h"
 
 APPLICATIONICONNAME 1000 "WorkLog"
-VERSION 1 "1.0"
+VERSION 1 "1.1"
 ICONFAMILY "icon_large.bmp" "" "" "" TRANSPARENT 255 0 255
 SMALLICONFAMILY "icon_small.bmp" "" "" "" TRANSPARENT 255 0 255
 
@@ -117,6 +117,6 @@ ALERT ID AboutAlert
 INFORMATION
 BEGIN
   TITLE "About WorkLog"
-  MESSAGE "WorkLog 1.0\n\nMeetings, to-dos and work hours, one day at a time."
+  MESSAGE "WorkLog 1.1\n\nMeetings, to-dos and work hours, one day at a time."
   BUTTONS "OK"
 END

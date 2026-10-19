@@ -39,6 +39,7 @@ BEGIN
     MENUITEM "End Now" ID DayMenuEndNow "E"
     MENUITEM "New Meeting" ID DayMenuNewMeeting "M"
     MENUITEM "New Todo" ID DayMenuNewTodo "T"
+    MENUITEM "Copy Open Todos" ID DayMenuCopyTodos "P"
     MENUITEM SEPARATOR
     MENUITEM "About WorkLog" ID DayMenuAbout
   END

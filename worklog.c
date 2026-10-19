@@ -384,6 +384,77 @@ static void SetDayTimes(FormType *frm, Int16 begin, Int16 end)
     DrawDay(frm);
 }
 
+/* True if the shown day already has a to-do with this text. */
+static Boolean HasTodo(const Char *text)
+{
+    UInt16 i, n = DmNumRecords(gDB);
+    Boolean found = false;
+
+    for (i = FindDay(gDay); i < n && !found; i++) {
+        MemHandle h = DmQueryRecord(gDB, i);
+        RecHdr *r;
+        if (!h) continue;
+        r = (RecHdr *)MemHandleLock(h);
+        if (r->date != gDay) {
+            MemHandleUnlock(h);
+            break;
+        }
+        found = r->kind == kindTodo && StrCompare((Char *)(r + 1), text) == 0;
+        MemHandleUnlock(h);
+    }
+    return found;
+}
+
+/*
+ * Copy the open to-dos of the last earlier day that has any to-dos
+ * (skipping empty days such as weekends) to the shown day.
+ */
+static void CopyOpenTodos(FormType *frm)
+{
+    UInt16 i = FindDay(gDay), n, src = 0;
+    Boolean found = false;
+
+    /* Records are sorted by (date, kind), so walking backwards the first
+       to-do belongs to the latest earlier day with to-dos. */
+    while (i > 0 && !found) {
+        MemHandle h = DmQueryRecord(gDB, --i);
+        RecHdr *r;
+        if (!h) continue;
+        r = (RecHdr *)MemHandleLock(h);
+        if (r->kind == kindTodo) {
+            src = r->date;
+            found = true;
+        }
+        MemHandleUnlock(h);
+    }
+    if (!found) return;
+
+    /* New records sort after the source day, so its indices stay valid. */
+    n = DmNumRecords(gDB);
+    for (i = FindDay(src); i < n; i++) {
+        MemHandle h = DmQueryRecord(gDB, i);
+        RecHdr *r;
+        Char *text = NULL;
+        if (!h) continue;
+        r = (RecHdr *)MemHandleLock(h);
+        if (r->date != src) {
+            MemHandleUnlock(h);
+            break;
+        }
+        if (r->kind == kindTodo && !(r->flags & flagDone)) {
+            text = (Char *)MemPtrNew(StrLen((Char *)(r + 1)) + 1);
+            if (text) StrCopy(text, (Char *)(r + 1));
+        }
+        MemHandleUnlock(h);
+        if (text) {
+            if (!HasTodo(text)) SaveRec(-1, kindTodo, 0, 0, 0, text);
+            MemPtrFree(text);
+        }
+    }
+    LoadDay();
+    DrawDay(frm);
+}
+
 static Boolean PickTime(Int16 *t, const Char *title)
 {
     Int16 cur = *t < 0 ? NowMinutes() : *t;
@@ -531,6 +602,9 @@ static Boolean DayFormHandleEvent(EventType *e)
             break;
         case DayMenuNewTodo:
             OpenEditor(-1, kindTodo);
+            break;
+        case DayMenuCopyTodos:
+            CopyOpenTodos(frm);
             break;
         case DayMenuAbout:
             FrmAlert(AboutAlert);

@@ -43,6 +43,7 @@
 #define DayMenuNewMeeting     2003
 #define DayMenuNewTodo        2004
 #define DayMenuAbout          2005
+#define DayMenuCopyTodos      2006
 
 #define MonthMenuBar          2100
 #define MonthMenuToday        2101

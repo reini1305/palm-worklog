@@ -1,4 +1,4 @@
-# WorkLog - Palm OS work journal (runs on Palm OS 3.5+).
+# WorkLog - Palm OS work journal (runs on Palm OS 3.1+).
 
 ![Day](images/day.png)
 ![Month](images/month.png)

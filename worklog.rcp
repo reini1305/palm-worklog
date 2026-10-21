@@ -92,7 +92,7 @@ ALERT ID RomIncompatibleAlert
 ERROR
 BEGIN
   TITLE "System Incompatible"
-  MESSAGE "WorkLog requires Palm OS 3.5 or later."
+  MESSAGE "WorkLog requires Palm OS 3.1 or later."
   BUTTONS "OK"
 END
 

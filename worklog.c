@@ -119,24 +119,31 @@ static void FormatTime(Int16 t, Char *s)
     *s = 0;
 }
 
-/* Day of week + day/month in the user's preferred order and separator,
- * without the year, e.g. "Fri 10/16" or "Fri 16.10." */
+/* Day of week + day/month in the user's preferred format, without the
+ * year, e.g. "Fri 10/16" or "Fri 16.10." */
 static void FormatDay(UInt16 days, Char *s)
 {
     DateType d = ToDate(days);
-    const Char *tmpl;
+    DateFormatType fmt = (DateFormatType)PrefGetPreference(prefDateFormat);
+    Char *date;
 
-    switch ((DateFormatType)PrefGetPreference(prefDateFormat)) {
-    case dfDMYWithSlashes: tmpl = "^1r ^0s/^3s";  break;
-    case dfDMYWithDots:    tmpl = "^1r ^0s.^3s."; break;
-    case dfDMYWithDashes:  tmpl = "^1r ^0s-^3s";  break;
-    case dfYMDWithDots:    tmpl = "^1r ^3s.^0s";  break;
-    case dfYMDWithDashes:
-    case dfMDYWithDashes:  tmpl = "^1r ^3s-^0s";  break;
-    default:               tmpl = "^1r ^3s/^0s";  break;
+    DateToDOWDMFormat(d.month, d.day, d.year + firstYear, fmt, s);
+    date = StrChr(s, ' ');
+    if (!date || StrLen(date) < 4) return;
+    date++;
+    switch (fmt) {
+    case dfYMDWithSlashes:
+    case dfYMDWithDots:
+    case dfYMDWithDashes:   /* "Fri 26/10/16" -> "Fri 10/16" */
+        MemMove(date, date + 3, StrLen(date + 3) + 1);
+        break;
+    case dfDMYWithDots:     /* "Fri 16.10.26" -> "Fri 16.10." */
+        s[StrLen(s) - 2] = 0;
+        break;
+    default:                /* "Fri 10/16/26" -> "Fri 10/16" */
+        s[StrLen(s) - 3] = 0;
+        break;
     }
-    DateTemplateToAscii(tmpl, d.month, d.day, d.year + firstYear,
-                        s, dowDateStringLength - 1);
 }
 
 static void DrawRightAligned(const Char *s, Coord right, Coord y)
@@ -985,7 +992,7 @@ static Err RomVersionCompatible(UInt16 launchFlags)
 {
     UInt32 rom = 0;
     FtrGet(sysFtrCreator, sysFtrNumROMVersion, &rom);
-    if (rom >= sysMakeROMVersion(3, 5, 0, sysROMStageRelease, 0))
+    if (rom >= sysMakeROMVersion(3, 1, 0, sysROMStageRelease, 0))
         return errNone;
 
     if ((launchFlags & (sysAppLaunchFlagNewGlobals | sysAppLaunchFlagUIApp))

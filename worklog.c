@@ -809,10 +809,10 @@ static void DrawMonth(FormType *frm)
 
         if (gMonthBegin[day] >= 0 || gMonthEnd[day] >= 0) {
             FormatTime(gMonthBegin[day], buf);
-            DrawRightAligned(buf, 76, y);
-            WinDrawChars("-", 1, 80, y);
+            DrawRightAligned(buf, 86, y);
+            WinDrawChars("-", 1, 90, y);
             FormatTime(gMonthEnd[day], buf);
-            DrawRightAligned(buf, 110, y);
+            DrawRightAligned(buf, 120, y);
             FormatTime(Duration(day), buf);
             DrawRightAligned(buf, r.topLeft.x + r.extent.x - 2, y);
         }
@@ -823,12 +823,12 @@ static void DrawMonth(FormType *frm)
 
     for (i = 0; i < gMonthDays; i++)
         if (Duration(i) > 0) total += Duration(i);
-    StrCopy(buf, "Total ");
+    StrCopy(buf, " ");
     FormatTime((Int16)total, buf + StrLen(buf));
     RctSetRectangle(&totalR, 96, 147, 84, 12);
     WinEraseRectangle(&totalR, 0);
     FntSetFont(boldFont);
-    DrawRightAligned(buf, 159, 148);
+    DrawRightAligned(buf, r.topLeft.x + r.extent.x - 2, 148);
     FntSetFont(old);
 }
 

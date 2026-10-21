@@ -474,7 +474,24 @@ static void OpenEditor(Int16 rec, UInt8 kind)
         gEditTime = r->t1;
         MemHandleUnlock(h);
     } else {
+        UInt16 n, i;
+        // take time of latest meeting today
         gEditTime = (NowMinutes() / 60) * 60;
+        n = DmNumRecords(gDB);
+        for (i = FindDay(gDay); i < n; i++) {
+            MemHandle h = DmQueryRecord(gDB, i);
+            RecHdr *r;
+            if (!h) continue;
+            r = (RecHdr *)MemHandleLock(h);
+            if (r->date != gDay) {
+                MemHandleUnlock(h);
+                break;
+            }
+            if (r->kind == kindMeeting) {
+                gEditTime = r->t1;
+            }
+            MemHandleUnlock(h);
+        }
     }
     FrmPopupForm(EditForm);
 }

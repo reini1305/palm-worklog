@@ -985,7 +985,7 @@ static Err RomVersionCompatible(UInt16 launchFlags)
 {
     UInt32 rom = 0;
     FtrGet(sysFtrCreator, sysFtrNumROMVersion, &rom);
-    if (rom >= sysMakeROMVersion(3, 1, 0, sysROMStageRelease, 0))
+    if (rom >= sysMakeROMVersion(3, 5, 0, sysROMStageRelease, 0))
         return errNone;
 
     if ((launchFlags & (sysAppLaunchFlagNewGlobals | sysAppLaunchFlagUIApp))

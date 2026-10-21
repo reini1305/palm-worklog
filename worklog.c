@@ -63,10 +63,9 @@ static Int16     gEditRec;              /* -1 for a new item */
 static UInt8     gEditKind;
 static Int16     gEditTime;
 
-static Char      gDateLabel[12], gBeginLabel[6], gEndLabel[6];
+static Char      gDateLabel[dowDateStringLength], gBeginLabel[6], gEndLabel[6];
 static Char      gMonthLabel[10], gEditTimeLabel[6];
 
-static const Char *kDow[] = { "Su", "Mo", "Tu", "We", "Th", "Fr", "Sa" };
 static const Char *kMonth[] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun",
                                 "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
 
@@ -120,20 +119,24 @@ static void FormatTime(Int16 t, Char *s)
     *s = 0;
 }
 
-/* "Fr 16.10." */
+/* Day of week + day/month in the user's preferred order and separator,
+ * without the year, e.g. "Fri 10/16" or "Fri 16.10." */
 static void FormatDay(UInt16 days, Char *s)
 {
     DateType d = ToDate(days);
-    StrCopy(s, kDow[DayOfWeek(d.month, d.day, d.year + firstYear)]);
-    s += StrLen(s);
-    *s++ = ' ';
-    StrIToA(s, d.day);
-    s += StrLen(s);
-    *s++ = '.';
-    StrIToA(s, d.month);
-    s += StrLen(s);
-    *s++ = '.';
-    *s = 0;
+    const Char *tmpl;
+
+    switch ((DateFormatType)PrefGetPreference(prefDateFormat)) {
+    case dfDMYWithSlashes: tmpl = "^1r ^0s/^3s";  break;
+    case dfDMYWithDots:    tmpl = "^1r ^0s.^3s."; break;
+    case dfDMYWithDashes:  tmpl = "^1r ^0s-^3s";  break;
+    case dfYMDWithDots:    tmpl = "^1r ^3s.^0s";  break;
+    case dfYMDWithDashes:
+    case dfMDYWithDashes:  tmpl = "^1r ^3s-^0s";  break;
+    default:               tmpl = "^1r ^3s/^0s";  break;
+    }
+    DateTemplateToAscii(tmpl, d.month, d.day, d.year + firstYear,
+                        s, dowDateStringLength - 1);
 }
 
 static void DrawRightAligned(const Char *s, Coord right, Coord y)
@@ -778,7 +781,7 @@ static void DrawMonth(FormType *frm)
     UInt16 i, rows, today = Today();
     Int16 maxTop;
     Int32 total = 0;
-    Char buf[12];
+    Char buf[dowDateStringLength];
     FontID old = FntGetFont();
 
     CtlSetLabel((ControlType *)GetObj(frm, MonthLabel), gMonthLabel);

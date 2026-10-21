@@ -228,9 +228,12 @@ static void ToggleDone(UInt16 rec)
     MemHandle h = DmGetRecord(gDB, rec);
     RecHdr *r = (RecHdr *)MemHandleLock(h);
     UInt8 f = r->flags ^ flagDone;
+    Int16 t = f;
+    DmWrite(r, OffsetOf(RecHdr, t1), &t, sizeof(t));
     DmWrite(r, OffsetOf(RecHdr, flags), &f, 1);
     MemHandleUnlock(h);
     DmReleaseRecord(gDB, rec, true);
+    DmInsertionSort(gDB, CompareRecs, 0);
 }
 
 /* ----------------------------------------------------------- day view */
@@ -510,6 +513,7 @@ static Boolean ColumnTap(FormType *frm, Column *c, Coord x, Coord y)
     } else if (c->kind == kindTodo && c->lines[line].first
                && x < r.topLeft.x + c->indent) {
         ToggleDone(c->lines[line].rec);
+        LoadDay();
         DrawColumn(frm, c);
     } else {
         OpenEditor(c->lines[line].rec, c->kind);

@@ -1,5 +1,5 @@
 /*
- * WorkLog - a daily work journal for Palm OS 3.5+ (targets Palm OS 4).
+ * WorkLog - a daily work journal for Palm OS 3.1+
  *
  * Day view:   begin/end of the work day, meetings (left), to-dos (right).
  * Month view: begin/end/duration per day plus a monthly total.
@@ -70,6 +70,13 @@ static const Char *kMonth[] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun",
                                 "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
 
 static Boolean   showFullDescription = true;
+
+#define appPrefID       0
+#define appPrefVersion  1
+
+typedef struct {
+    Boolean showFullDescription;
+} AppPrefs;
 
 /* ------------------------------------------------------------ helpers */
 
@@ -958,6 +965,23 @@ static Boolean MonthFormHandleEvent(EventType *e)
 
 /* ---------------------------------------------------------- app plumbing */
 
+static void LoadPrefs(void)
+{
+    AppPrefs p;
+    UInt16 size = sizeof(p);
+    Int16 ver = PrefGetAppPreferences(appCreator, appPrefID, &p, &size, true);
+    if (ver == appPrefVersion && size == sizeof(p))
+        showFullDescription = p.showFullDescription;
+}
+
+static void SavePrefs(void)
+{
+    AppPrefs p;
+    p.showFullDescription = showFullDescription;
+    PrefSetAppPreferences(appCreator, appPrefID, appPrefVersion,
+                          &p, sizeof(p), true);
+}
+
 static Boolean AppHandleEvent(EventType *e)
 {
     FormType *frm;
@@ -1019,9 +1043,11 @@ UInt32 PilotMain(UInt16 cmd, MemPtr cmdPBP, UInt16 launchFlags)
     if (err) return err;
 
     gDay = Today();
+    LoadPrefs();
     FrmGotoForm(DayForm);
     EventLoop();
     FrmCloseAllForms();
+    SavePrefs();
     DmCloseDatabase(gDB);
     return errNone;
 }

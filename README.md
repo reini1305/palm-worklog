@@ -44,3 +44,14 @@ so HotSync copies it to the desktop. Each record is:
     char   text[] NUL-terminated
 
 Records are sorted by (date, kind, t1). All values are big-endian.
+
+## Export to PDF
+
+`tools/export_pdf.py` turns the HotSynced database into a PDF with a year
+summary, one page per month and one page per week:
+
+    pip install -r tools/requirements.txt
+    tools/export_pdf.py WorkLogDB-WkJn.pdb --year 2026 -o worklog-2026.pdf
+
+Options: `--first-day monday|sunday` (default monday), `--page-size a4|letter`
+(default a4), `--date-format` (strftime, default `%a %d.%m.`).

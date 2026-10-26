@@ -9,13 +9,15 @@ BUILDPRC = $(BIN)build-prc
 CFLAGS  = -palmos4 -O2 -Wall
 APP     = WorkLog
 CREATOR = WkJn
+HEADERS = resources.h constants.h globals.h helpers.h day.h month.h database.h editor.h
+OBJS    = worklog.o globals.o helpers.o day.o month.o database.o editor.o
 
 all: $(APP).prc
 
-worklog: worklog.o
+worklog: $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $^
 
-worklog.o: worklog.c resources.h
+$(OBJS): $(HEADERS)
 
 res/stamp: worklog.rcp resources.h
 	mkdir -p res

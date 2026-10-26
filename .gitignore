@@ -1,4 +1,5 @@
 WorkLog.prc
 res/
 worklog
-worklog.o
+.vscode/
+*.o

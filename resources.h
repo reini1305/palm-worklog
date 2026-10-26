@@ -23,8 +23,8 @@
 #define MonthPrev             1101
 #define MonthLabel            1102
 #define MonthNext             1103
-#define MonthList             1104
-#define MonthListBar          1105
+#define MonthTable            1104
+#define MonthTableBar         1105
 #define MonthToday            1106
 #define MonthDay              1107
 

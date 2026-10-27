@@ -85,21 +85,50 @@ static Err RomVersionCompatible(UInt16 launchFlags)
 UInt32 PilotMain(UInt16 cmd, MemPtr cmdPBP, UInt16 launchFlags)
 {
     Err err;
-
-    if (cmd != sysAppLaunchCmdNormalLaunch) return errNone;
-
     err = RomVersionCompatible(launchFlags);
     if (err) return err;
 
-    err = OpenDB();
-    if (err) return err;
-
-    gDay = Today();
-    LoadPrefs();
-    FrmGotoForm(DayForm);
-    EventLoop();
-    FrmCloseAllForms();
-    SavePrefs();
-    DmCloseDatabase(gDB);
+    switch (cmd)
+	{
+		case sysAppLaunchCmdNormalLaunch:		// Normal launch: we have a UI, handlers and all the stuff
+			err = OpenDB();
+            if (err) return err;
+            gDay = Today();
+            LoadPrefs();
+            FrmGotoForm(DayForm);
+            EventLoop();
+            FrmCloseAllForms();
+            SavePrefs();
+            DmCloseDatabase(gDB);
+			break;
+			
+		case sysAppLaunchCmdFind:				// STEP 2: here we are... system requests us to search for data that user is looking for
+            LookFor((FindParamsPtr)cmdPBP);
+			break;
+			
+		case sysAppLaunchCmdGoTo:				// STEP 3: there we go... system requests us to SHOW the data we just told him we had found!
+			if (launchFlags & sysAppLaunchFlagNewGlobals)		// We're being launched... so we have more stuff to do than just display something
+			{
+				err = OpenDB();
+                if (err) return err;
+                gDay = GoTo((GoToParamsPtr)cmdPBP);
+                LoadPrefs();
+                FrmGotoForm(DayForm);
+                EventLoop();
+                FrmCloseAllForms();
+                SavePrefs();
+                DmCloseDatabase(gDB);
+			}
+			else												// We're ALREADY running... so just display the data we found previously
+			{
+				gDay = GoTo((GoToParamsPtr)cmdPBP);
+				FrmGotoForm(DayForm);
+			}
+			break;
+			
+		default:
+			break;
+	}
+    
     return errNone;
 }

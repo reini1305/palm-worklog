@@ -2,6 +2,65 @@
 #include "constants.h"
 #include "globals.h"
 #include "resources.h"
+#include "helpers.h"
+
+void LookFor(FindParamsPtr params)
+{
+    UInt16 rec = params->recordNum;
+    UInt16 n;
+    MemHandle h;
+    RecHdr *r;
+    Boolean found;
+    UInt32 pos;
+    UInt16 length;
+    RectangleType rect;
+    Char *text;
+    Char buf[dowDateStringLength];
+    Err err = OpenDB();
+    if (err) return;
+    n = DmNumRecords(gDB);
+
+    if (FindDrawHeader(params, "WorkLog"))
+        return;
+
+    for (; rec < n; rec++)
+	{
+		if (											// here, we give a chance to the user to cancel the Find
+			((rec%10) == 0) &&							// every 10 records
+			EvtSysEventAvail(true)						// if there's a system event to process
+		   )
+			{
+				params->more = true;				    // we confirm there are some more records to check
+				break;
+			}
+        h = DmQueryRecord(gDB, rec);
+        if (!h) continue;
+        r = (RecHdr *)MemHandleLock(h);
+        if (r->kind == kindDay) {
+            MemHandleUnlock(h);
+            continue;
+        }
+        text = (Char *)(r+1);
+        found = TxtFindString(text, params->strToFind, &pos, &length);
+        if (found)
+        {
+            if(FindSaveMatch(params, rec, pos, 0, 0, r->date, 0))
+                return;
+
+            FindGetLineBounds(params, &rect);
+            FormatDay(r->date, buf);
+            WinDrawTruncChars(buf, StrLen(buf), rect.topLeft.x+1, rect.topLeft.y, 30);
+            WinDrawTruncChars(text, StrLen(text), rect.topLeft.x+40, rect.topLeft.y, rect.extent.x-42);
+        }
+        MemHandleUnlock(h);
+    }
+    DmCloseDatabase(gDB);
+}
+
+UInt16 GoTo(GoToParamsPtr params)
+{
+    return params->dbCardNo;
+}
 
 Int16 CompareRecs(void *a, void *b, Int16 other,
                          SortRecordInfoPtr ia, SortRecordInfoPtr ib,

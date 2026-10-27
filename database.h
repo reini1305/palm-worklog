@@ -3,6 +3,8 @@
 
 #include <PalmOS.h>
 
+void LookFor(FindParamsPtr params);
+UInt16 GoTo(GoToParamsPtr params);
 Int16 CompareRecs(void *a, void *b, Int16 other,
                          SortRecordInfoPtr ia, SortRecordInfoPtr ib,
                          MemHandle appInfoH);

@@ -2,7 +2,7 @@
 
 ![Day](images/day.png)
 ![Month](images/month.png)
-![Find](images/month.png)
+![Find](images/find.png)
 
 - **Day view**: begin/end of work, meetings on the left, to-dos on the right.
   - Tap *Begin*/*End* to pick a time (menu: *Begin Now* `/B`, *End Now* `/E`).

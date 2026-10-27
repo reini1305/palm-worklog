@@ -16,6 +16,7 @@ void LookFor(FindParamsPtr params)
     Char *text;
     Char buf[dowDateStringLength];
     LocalID dbID;
+    UInt8 pad = 35;
     DmOpenRef db = DmOpenDatabaseByTypeCreator(dbType, appCreator, dmModeReadOnly);
     if(!db) return;
     DmOpenDatabaseInfo(db, &dbID, NULL, NULL, &cardNo, NULL);
@@ -54,7 +55,20 @@ void LookFor(FindParamsPtr params)
             FindGetLineBounds(params, &rect);
             FormatDay(r->date, buf);
             WinDrawTruncChars(buf+4, StrLen(buf) - 4, rect.topLeft.x+1, rect.topLeft.y, 25);
-            WinDrawTruncChars(text, StrLen(text), rect.topLeft.x+35, rect.topLeft.y, rect.extent.x-37);
+            if (r->kind == kindTodo) {
+                Char box = (r->flags & flagDone) ? symbolCheckboxOn
+                                                 : symbolCheckboxOff;
+                pad = 45;
+                FntSetFont(symbol11Font);
+                WinDrawChars(&box, 1, rect.topLeft.x+pad-12, rect.topLeft.y);
+                FntSetFont(stdFont);
+            }
+            WinDrawTruncChars(
+                text,
+                StrLen(text),
+                rect.topLeft.x+pad,
+                rect.topLeft.y,
+                rect.extent.x-pad-2);
             params->lineNumber++;
         }
         MemHandleUnlock(h);

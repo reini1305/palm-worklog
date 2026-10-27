@@ -2,18 +2,20 @@
 
 ![Day](images/day.png)
 ![Month](images/month.png)
+![Find](images/month.png)
 
 - **Day view**: begin/end of work, meetings on the left, to-dos on the right.
   - Tap *Begin*/*End* to pick a time (menu: *Begin Now* `/B`, *End Now* `/E`).
   - Tap a meeting or to-do to edit it; tap empty space in a column to add one.
   - Tap a to-do's checkbox to toggle it.
-  - Arrows or hardware up/down change the day; tap the date to pick one.
+  - Arrows or hardware up/down change the day
 - **Month view**: begin, end and duration per day, with a monthly total.
   Tap a row to open that day.
+- **Support for system-wide-find**: Find button searches for text in both meetings and todos, allowing to jump to the day of the meeting/todo.
 
 ## LLM Disclaimer
 
-This initial version has been generated using Claude and Opus 5.5 according to a mockup of me. Subsequent tweaks have been done by hand as well as future development as I'm learning Palm OS programming.
+The initial version has been generated using Claude and Opus 5.5 according to a mockup of me. Subsequent tweaks have been done by hand as well as future development will be as I'm learning Palm OS programming.
 
 ## Build
 

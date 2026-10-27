@@ -6,8 +6,7 @@
 
 void LookFor(FindParamsPtr params)
 {
-    UInt16 rec = params->recordNum;
-    UInt16 n;
+    UInt16 rec, n, cardNo;
     MemHandle h;
     RecHdr *r;
     Boolean found;
@@ -16,14 +15,16 @@ void LookFor(FindParamsPtr params)
     RectangleType rect;
     Char *text;
     Char buf[dowDateStringLength];
-    Err err = OpenDB();
-    if (err) return;
-    n = DmNumRecords(gDB);
+    LocalID dbID;
+    DmOpenRef db = DmOpenDatabaseByTypeCreator(dbType, appCreator, dmModeReadOnly);
+    if(!db) return;
+    DmOpenDatabaseInfo(db, &dbID, NULL, NULL, &cardNo, NULL);
+    n = DmNumRecords(db);
 
     if (FindDrawHeader(params, "WorkLog"))
         return;
 
-    for (; rec < n; rec++)
+    for (rec = params->recordNum; rec < n; rec++)
 	{
 		if (											// here, we give a chance to the user to cancel the Find
 			((rec%10) == 0) &&							// every 10 records
@@ -33,7 +34,7 @@ void LookFor(FindParamsPtr params)
 				params->more = true;				    // we confirm there are some more records to check
 				break;
 			}
-        h = DmQueryRecord(gDB, rec);
+        h = DmQueryRecord(db, rec);
         if (!h) continue;
         r = (RecHdr *)MemHandleLock(h);
         if (r->kind == kindDay) {
@@ -44,22 +45,27 @@ void LookFor(FindParamsPtr params)
         found = TxtFindString(text, params->strToFind, &pos, &length);
         if (found)
         {
-            if(FindSaveMatch(params, rec, pos, 0, 0, r->date, 0))
-                return;
+            if(FindSaveMatch(params, rec, (UInt16)pos, 0, r->date, cardNo, dbID))
+            {
+                MemHandleUnlock(h);
+                goto done;
+            }
 
             FindGetLineBounds(params, &rect);
             FormatDay(r->date, buf);
-            WinDrawTruncChars(buf, StrLen(buf), rect.topLeft.x+1, rect.topLeft.y, 30);
-            WinDrawTruncChars(text, StrLen(text), rect.topLeft.x+40, rect.topLeft.y, rect.extent.x-42);
+            WinDrawTruncChars(buf+4, StrLen(buf) - 4, rect.topLeft.x+1, rect.topLeft.y, 25);
+            WinDrawTruncChars(text, StrLen(text), rect.topLeft.x+35, rect.topLeft.y, rect.extent.x-37);
+            params->lineNumber++;
         }
         MemHandleUnlock(h);
     }
-    DmCloseDatabase(gDB);
+done:
+    DmCloseDatabase(db);
 }
 
 UInt16 GoTo(GoToParamsPtr params)
 {
-    return params->dbCardNo;
+    return (UInt16)params->matchCustom;
 }
 
 Int16 CompareRecs(void *a, void *b, Int16 other,

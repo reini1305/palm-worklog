@@ -40,8 +40,6 @@ typedef struct {
     Line   lines[maxLines];
 } Column;
 
-extern const Char *kMonth[12];
-
 #define appPrefID       0
 #define appPrefVersion  1
 

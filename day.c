@@ -161,6 +161,8 @@ void DrawDay(FormType *frm)
     FormatTime(gEnd, gEndLabel);
     CtlSetLabel((ControlType *)GetObj(frm, DayEnd), gEndLabel);
     CtlSetValue((ControlType *)GetObj(frm, DayShowFull), gShowFullDescription);
+    FormatWeek(gDay);
+    FrmSetTitle(frm, gCalendarWeek);
 
     DrawColumn(frm, &gCols[0]);
     DrawColumn(frm, &gCols[1]);

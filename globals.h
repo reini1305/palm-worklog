@@ -27,6 +27,7 @@ extern Int16     gEditTime;
 extern Char      gDateLabel[dowDateStringLength], gBeginLabel[6], gEndLabel[6];
 extern Char      gMonthLabel[10], gEditTimeLabel[6];
 extern const Char *kMonth[12];
+extern Char      gCalendarWeek[4];
 
 extern Boolean   gShowFullDescription;
 

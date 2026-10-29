@@ -1,4 +1,5 @@
 #include "helpers.h"
+#include "globals.h"
 
 void *GetObj(FormType *frm, UInt16 id)
 {
@@ -38,6 +39,26 @@ Boolean PickTime(Int16 *t, const Char *title)
     if (!SelectOneTime(&hour, &minute, title)) return false;
     *t = hour * 60 + minute;
     return true;
+}
+
+static UInt16 IsoWeek(UInt16 days)
+{
+    DateType d = ToDate(days);
+    UInt16 wd = (DayOfWeek(d.month, d.day, d.year + firstYear) + 6) % 7;
+    UInt16 thu = days - wd + 3;
+    d = ToDate(thu);
+    d.month = 1;
+    d.day = 1;
+    return (thu - (UInt16)DateToDays(d)) / 7 + 1;
+}
+
+void FormatWeek(UInt16 days)
+{
+    UInt16 week = IsoWeek(days);
+    gCalendarWeek[0] = 'W';
+    gCalendarWeek[1] = '0' + week / 10;
+    gCalendarWeek[2] = '0' + week % 10;
+    gCalendarWeek[3] = 0;
 }
 
 /* "7:05", or "--:--" when unset. Also used for durations > 24h. */

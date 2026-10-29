@@ -21,6 +21,7 @@ Int16     gEditTime;
 
 Char      gDateLabel[dowDateStringLength], gBeginLabel[6], gEndLabel[6];
 Char      gMonthLabel[10], gEditTimeLabel[6];
+Char      gCalendarWeek[4];
 
 Boolean   gShowFullDescription = true;
 

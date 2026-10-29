@@ -1,7 +1,7 @@
 #include "resources.h"
 
 APPLICATIONICONNAME 1000 "WorkLog"
-VERSION 1 "1.5"
+VERSION 1 "1.6"
 ICONFAMILY "icon_large.bmp" "" "" "" TRANSPARENT 255 0 255
 SMALLICONFAMILY "icon_small.bmp" "" "" "" TRANSPARENT 255 0 255
 
@@ -10,7 +10,7 @@ FORM ID DayForm AT (0 0 160 160)
 NOFRAME
 MENUID DayMenuBar
 BEGIN
-  TITLE "Day"
+  TITLE "W  "
   CHECKBOX "Full" ID DayShowFull AT (30 1 50 12) CHECKED
   REPEATBUTTON "\002" ID DayPrev AT (80 1 10 12) NOFRAME FONT 4
   BUTTON "Wed 00/00" ID DayDate AT (90 1 58 12) NOFRAME FONT 1
@@ -117,6 +117,6 @@ ALERT ID AboutAlert
 INFORMATION
 BEGIN
   TITLE "About WorkLog"
-  MESSAGE "WorkLog 1.5\n\nMeetings, to-dos and work hours, one day at a time."
+  MESSAGE "WorkLog 1.6\n\nMeetings, to-dos and work hours, one day at a time."
   BUTTONS "OK"
 END

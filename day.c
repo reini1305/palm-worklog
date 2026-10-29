@@ -3,10 +3,11 @@
 #include "database.h"
 #include "resources.h"
 #include "helpers.h"
+#include "calendar.h"
 
-static void AddLines(Column *c, UInt16 rec, RecHdr *r)
+static void AddLines(Column *c, UInt16 rec, Char *text, UInt8 cal)
 {
-    Char *text = (Char *)(r + 1), *p = text;
+    Char *p = text;
     Boolean first = true;
     UInt8 lines = 0;
     const UInt8 max_lines = gShowFullDescription ? 128 : 2;
@@ -19,6 +20,7 @@ static void AddLines(Column *c, UInt16 rec, RecHdr *r)
         c->lines[c->numLines].off = p - text;
         c->lines[c->numLines].len = len;
         c->lines[c->numLines].first = first;
+        c->lines[c->numLines].cal = cal;
         c->numLines++;
         lines++;
         p += len;
@@ -26,14 +28,27 @@ static void AddLines(Column *c, UInt16 rec, RecHdr *r)
     } while (*p && lines < max_lines);
 }
 
+/* Add the calendar events from index k on that start no later than
+ * the given time; returns the index of the first one not added. */
+static UInt16 AddCalendar(Column *c, UInt16 k, Int16 before)
+{
+    for (; k < gNumCal && gCal[k].start <= before; k++) {
+        MemHandle h = DmQueryRecord(gCalDB, gCal[k].rec);
+        AddLines(c, gCal[k].rec, CalText(MemHandleLock(h)), true);
+        MemHandleUnlock(h);
+    }
+    return k;
+}
+
 void LoadDay(void)
 {
-    UInt16 i, n = DmNumRecords(gDB);
+    UInt16 i, k = 0, n = DmNumRecords(gDB);
     FontID old = FntSetFont(stdFont);
 
     gHdrRec = -1;
     gBegin = gEnd = kNoTime;
     gCols[0].numLines = gCols[1].numLines = 0;
+    LoadCalendar(gDay);
 
     for (i = FindDay(gDay); i < n; i++) {
         MemHandle h = DmQueryRecord(gDB, i);
@@ -49,10 +64,13 @@ void LoadDay(void)
             gBegin = r->t1;
             gEnd = r->t2;
         } else {
-            AddLines(&gCols[r->kind - 1], i, r);
+            if (r->kind == kindMeeting)
+                k = AddCalendar(&gCols[0], k, r->t1);
+            AddLines(&gCols[r->kind - 1], i, (Char *)(r + 1), false);
         }
         MemHandleUnlock(h);
     }
+    AddCalendar(&gCols[0], k, 32767);
     FntSetFont(old);
 }
 
@@ -92,15 +110,26 @@ void DrawColumn(FormType *frm, Column *c)
     old = FntGetFont();
     for (i = 0; i < rows && c->top + i < c->numLines; i++) {
         Line *ln = &c->lines[c->top + i];
-        MemHandle h = DmQueryRecord(gDB, ln->rec);
-        RecHdr *rec = (RecHdr *)MemHandleLock(h);
-        Char *s = (Char *)(rec + 1) + ln->off;
+        MemHandle h = DmQueryRecord(ln->cal ? gCalDB : gDB, ln->rec);
+        void *p = MemHandleLock(h);
+        RecHdr *rec = (RecHdr *)p;
+        Char *s = (ln->cal ? CalText(p) : (Char *)(rec + 1)) + ln->off;
         UInt16 len = ln->len;
         Coord y = r.topLeft.y + i * lineH;
 
         while (len && (s[len - 1] == '\n' || s[len - 1] == ' ')) len--;
 
-        if (ln->first) {
+        if (ln->cal) {
+            /* Datebook event: plain time and a gray bar, read-only */
+            WinDrawGrayLine(r.topLeft.x + c->indent - 3, y,
+                            r.topLeft.x + c->indent - 3, y + lineH - 1);
+            if (ln->first && CalStart(p) != kNoTime) {
+                Char t[8];
+                FormatTime(CalStart(p), t);
+                FntSetFont(stdFont);
+                WinDrawChars(t, StrLen(t), r.topLeft.x + 1, y);
+            }
+        } else if (ln->first) {
             if (c->kind == kindMeeting) {
                 Char t[8];
                 FormatTime(rec->t1, t);
@@ -267,6 +296,8 @@ static Boolean ColumnTap(FormType *frm, Column *c, Coord x, Coord y)
     line = c->top + (y - r.topLeft.y) / lineH;
     if (line >= c->numLines) {
         OpenEditor(-1, c->kind);
+    } else if (c->lines[line].cal) {
+        /* Datebook events are read-only */
     } else if (c->kind == kindTodo && c->lines[line].first
                && x < r.topLeft.x + c->indent) {
         ToggleDone(c->lines[line].rec);

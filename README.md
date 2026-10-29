@@ -1,4 +1,4 @@
-# WorkLog - Palm OS work journal (runs on Palm OS 3.1+).
+# WorkLog - Palm OS work journal
 
 ![Day](images/day.png)
 ![Month](images/month.png)
@@ -9,6 +9,8 @@
   - Tap a meeting or to-do to edit it; tap empty space in a column to add one.
   - Tap a to-do's checkbox to toggle it.
   - Arrows or hardware up/down change the day
+  - Events from the built-in Date Book are listed among the meetings,
+    marked with a gray bar. They are read-only; private events are hidden.
 - **Month view**: begin, end and duration per day, with a monthly total.
   Tap a row to open that day.
 - **Support for system-wide-find**: Find button searches for text in both meetings and todos, allowing to jump to the day of the meeting/todo.

@@ -6,6 +6,10 @@ Int16     gHdrRec;
 Int16     gBegin, gEnd;
 Column    gCols[2];
 
+DmOpenRef gCalDB;
+CalEvent  gCal[maxCal];
+UInt16    gNumCal;
+
 UInt16    gMonthFirst;
 UInt16    gMonthDays;
 Int16     gMonthBegin[31], gMonthEnd[31];

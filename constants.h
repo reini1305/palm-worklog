@@ -27,6 +27,7 @@ typedef struct {
     UInt16 off;         /* byte offset into the record's text */
     UInt8  len;
     UInt8  first;       /* first line of an item: draw time / checkbox */
+    UInt8  cal;         /* rec indexes the Datebook, not our database */
 } Line;
 
 typedef struct {
@@ -39,6 +40,13 @@ typedef struct {
     UInt16 top;         /* first visible line */
     Line   lines[maxLines];
 } Column;
+
+#define maxCal          16
+
+typedef struct {
+    UInt16 rec;         /* Datebook record index */
+    Int16  start;       /* minutes after midnight, kNoTime if untimed */
+} CalEvent;
 
 #define appPrefID       0
 #define appPrefVersion  1

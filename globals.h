@@ -11,6 +11,10 @@ extern Int16     gHdrRec;               /* index of the day record, -1 if none *
 extern Int16     gBegin, gEnd;
 extern Column    gCols[2];
 
+extern DmOpenRef gCalDB;                /* Datebook, NULL if missing */
+extern CalEvent  gCal[maxCal];          /* events of the shown day */
+extern UInt16    gNumCal;
+
 extern UInt16    gMonthFirst;           /* first day of shown month */
 extern UInt16    gMonthDays;
 extern Int16     gMonthBegin[31], gMonthEnd[31];

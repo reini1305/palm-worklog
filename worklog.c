@@ -16,6 +16,7 @@
 #include "day.h"
 #include "editor.h"
 #include "month.h"
+#include "calendar.h"
 
 static void LoadPrefs(void)
 {
@@ -93,6 +94,7 @@ UInt32 PilotMain(UInt16 cmd, MemPtr cmdPBP, UInt16 launchFlags)
 		case sysAppLaunchCmdNormalLaunch:		// Normal launch: we have a UI, handlers and all the stuff
 			err = OpenDB();
             if (err) return err;
+            OpenCalendar();
             gDay = Today();
             LoadPrefs();
             FrmGotoForm(DayForm);
@@ -100,6 +102,7 @@ UInt32 PilotMain(UInt16 cmd, MemPtr cmdPBP, UInt16 launchFlags)
             FrmCloseAllForms();
             SavePrefs();
             DmCloseDatabase(gDB);
+            CloseCalendar();
 			break;
 			
 		case sysAppLaunchCmdFind:				// STEP 2: here we are... system requests us to search for data that user is looking for
@@ -111,6 +114,7 @@ UInt32 PilotMain(UInt16 cmd, MemPtr cmdPBP, UInt16 launchFlags)
 			{
 				err = OpenDB();
                 if (err) return err;
+                OpenCalendar();
                 gDay = GoTo((GoToParamsPtr)cmdPBP);
                 LoadPrefs();
                 FrmGotoForm(DayForm);
@@ -118,6 +122,7 @@ UInt32 PilotMain(UInt16 cmd, MemPtr cmdPBP, UInt16 launchFlags)
                 FrmCloseAllForms();
                 SavePrefs();
                 DmCloseDatabase(gDB);
+                CloseCalendar();
 			}
 			else												// We're ALREADY running... so just display the data we found previously
 			{

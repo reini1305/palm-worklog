@@ -105,24 +105,31 @@ UInt16 FindDay(UInt16 day)
     return DmFindSortPosition(gDB, &key, NULL, CompareRecs, 0);
 }
 
-Err OpenDB(void)
+/* Open the database, creating it if needed; NULL on failure. */
+DmOpenRef OpenWorkLogDB(void)
 {
-    gDB = DmOpenDatabaseByTypeCreator(dbType, appCreator, dmModeReadWrite);
-    if (!gDB) {
+    DmOpenRef db = DmOpenDatabaseByTypeCreator(dbType, appCreator,
+                                               dmModeReadWrite);
+    if (!db) {
         LocalID id;
         UInt16 attr;
-        Err err = DmCreateDatabase(0, dbName, appCreator, dbType, false);
-        if (err) return err;
+        if (DmCreateDatabase(0, dbName, appCreator, dbType, false))
+            return NULL;
         id = DmFindDatabase(0, dbName);
         DmDatabaseInfo(0, id, NULL, &attr, NULL, NULL, NULL, NULL, NULL,
                        NULL, NULL, NULL, NULL);
         attr |= dmHdrAttrBackup;
         DmSetDatabaseInfo(0, id, NULL, &attr, NULL, NULL, NULL, NULL, NULL,
                           NULL, NULL, NULL, NULL);
-        gDB = DmOpenDatabase(0, id, dmModeReadWrite);
-        if (!gDB) return DmGetLastErr();
+        db = DmOpenDatabase(0, id, dmModeReadWrite);
     }
-    return errNone;
+    return db;
+}
+
+Err OpenDB(void)
+{
+    gDB = OpenWorkLogDB();
+    return gDB ? errNone : DmGetLastErr();
 }
 
 /* Write a record (rec < 0 creates one) and keep the database sorted. */

@@ -3,6 +3,7 @@
 #include "globals.h"
 #include "resources.h"
 #include "database.h"
+#include "beam.h"
 
 enum { colDay, colBegin, colEnd, colDuration, numMonthCols };
 static const Char *kMonthCols[numMonthCols] = { "Day", "Begin", "End", "Time" };
@@ -256,6 +257,9 @@ Boolean MonthFormHandleEvent(EventType *e)
         case MonthMenuToday:
             gDay = Today();
             ShowMonth(frm, true);
+            break;
+        case MonthMenuBeam:
+            BeamAll();
             break;
         case MonthMenuAbout:
             FrmAlert(AboutAlert);

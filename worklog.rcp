@@ -1,7 +1,7 @@
 #include "resources.h"
 
 APPLICATIONICONNAME 1000 "WorkLog"
-VERSION 1 "1.6"
+VERSION 1 "1.7"
 ICONFAMILY "icon_large.bmp" "" "" "" TRANSPARENT 255 0 255
 SMALLICONFAMILY "icon_small.bmp" "" "" "" TRANSPARENT 255 0 255
 
@@ -40,6 +40,7 @@ BEGIN
     MENUITEM "New Meeting" ID DayMenuNewMeeting "M"
     MENUITEM "New Todo" ID DayMenuNewTodo "T"
     MENUITEM "Copy Open Todos" ID DayMenuCopyTodos "P"
+    MENUITEM "Beam All Entries" ID DayMenuBeam
     MENUITEM SEPARATOR
     MENUITEM "About WorkLog" ID DayMenuAbout
   END
@@ -67,6 +68,7 @@ BEGIN
   PULLDOWN "Options"
   BEGIN
     MENUITEM "Go to Today" ID MonthMenuToday "T"
+    MENUITEM "Beam All Entries" ID MonthMenuBeam
     MENUITEM "About WorkLog" ID MonthMenuAbout
   END
 END
@@ -117,6 +119,14 @@ ALERT ID AboutAlert
 INFORMATION
 BEGIN
   TITLE "About WorkLog"
-  MESSAGE "WorkLog 1.6\n\nMeetings, to-dos and work hours, one day at a time."
+  MESSAGE "WorkLog 1.7\n\nMeetings, to-dos and work hours, one day at a time."
+  BUTTONS "OK"
+END
+
+ALERT ID BeamResultAlert
+INFORMATION
+BEGIN
+  TITLE "Entries Received"
+  MESSAGE "^1 new entries added.\n^2 already present."
   BUTTONS "OK"
 END

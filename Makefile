@@ -9,8 +9,8 @@ BUILDPRC = $(BIN)build-prc
 CFLAGS  = -palmos4 -O2 -Wall
 APP     = WorkLog
 CREATOR = WkJn
-HEADERS = resources.h constants.h globals.h helpers.h day.h month.h database.h editor.h calendar.h
-OBJS    = worklog.o globals.o helpers.o day.o month.o database.o editor.o calendar.o
+HEADERS = resources.h constants.h globals.h helpers.h day.h month.h database.h editor.h calendar.h beam.h
+OBJS    = worklog.o globals.o helpers.o day.o month.o database.o editor.o calendar.o beam.o
 
 all: $(APP).prc
 

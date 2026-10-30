@@ -17,6 +17,7 @@
 #include "editor.h"
 #include "month.h"
 #include "calendar.h"
+#include "beam.h"
 
 static void LoadPrefs(void)
 {
@@ -97,6 +98,7 @@ UInt32 PilotMain(UInt16 cmd, MemPtr cmdPBP, UInt16 launchFlags)
             OpenCalendar();
             gDay = Today();
             LoadPrefs();
+            RegisterBeam();
             FrmGotoForm(DayForm);
             EventLoop();
             FrmCloseAllForms();
@@ -131,9 +133,18 @@ UInt32 PilotMain(UInt16 cmd, MemPtr cmdPBP, UInt16 launchFlags)
 			}
 			break;
 			
+		case sysAppLaunchCmdSyncNotify:			// installed or HotSynced: claim .wkl beams
+			RegisterBeam();
+			break;
+
+		case sysAppLaunchCmdExgReceiveData:		// another Palm beamed its entries
+			err = ReceiveBeam((ExgSocketType *)cmdPBP,
+			                  (launchFlags & sysAppLaunchFlagSubCall) != 0);
+			break;
+
 		default:
 			break;
 	}
     
-    return errNone;
+    return err;
 }

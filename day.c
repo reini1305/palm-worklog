@@ -4,6 +4,7 @@
 #include "resources.h"
 #include "helpers.h"
 #include "calendar.h"
+#include "beam.h"
 
 static void AddLines(Column *c, UInt16 rec, Char *text, UInt8 cal)
 {
@@ -416,6 +417,9 @@ Boolean DayFormHandleEvent(EventType *e)
             break;
         case DayMenuCopyTodos:
             CopyOpenTodos(frm);
+            break;
+        case DayMenuBeam:
+            BeamAll();
             break;
         case DayMenuAbout:
             FrmAlert(AboutAlert);

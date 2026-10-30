@@ -13,6 +13,11 @@
     marked with a gray bar. They are read-only; private events are hidden.
 - **Month view**: begin, end and duration per day, with a monthly total.
   Tap a row to open that day.
+- **Beaming**: *Options → Beam All Entries* sends every entry over IR to
+  another Palm running WorkLog. The receiver merges instead of duplicating:
+  meetings with the same time and text and to-dos with the same text are
+  skipped (a to-do done on either side ends up done), and a day's missing
+  begin/end is filled in. Existing begin/end times are never overwritten.
 - **Support for system-wide-find**: Find button searches for text in both meetings and todos, allowing to jump to the day of the meeting/todo.
 
 ## LLM Disclaimer

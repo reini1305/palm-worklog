@@ -44,15 +44,18 @@
 #define DayMenuNewTodo        2004
 #define DayMenuAbout          2005
 #define DayMenuCopyTodos      2006
+#define DayMenuBeam           2007
 
 #define MonthMenuBar          2100
 #define MonthMenuToday        2101
 #define MonthMenuAbout        2102
+#define MonthMenuBeam         2103
 
 /* Alerts */
 #define RomIncompatibleAlert  3000
 #define DeleteAlert           3001
 #define MemoryAlert           3002
 #define AboutAlert            3003
+#define BeamResultAlert       3004
 
 #endif
